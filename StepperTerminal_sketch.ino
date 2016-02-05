@@ -1,9 +1,9 @@
-#include "Terminal.h"
+#include "CommandTerminal.h"
 
 int dirpin = 2;
 int steppin = 3;
 
-Terminal term = Terminal();
+CommandTerminal term = CommandTerminal();
 
 void setup()
 {
