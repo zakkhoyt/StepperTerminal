@@ -12,19 +12,22 @@
 #include <Arduino.h>
 
 struct CommandTerminalParam {
-    String key;
+    String arg;
     uint16_t value;
 };
+
+static int kCommandTerminalNotFound = -1;
 
 class CommandTerminal {
 public:
     CommandTerminal();
+    CommandTerminal(char paramDelim, char setDelim); // Default is '|' and ':'
     virtual ~CommandTerminal();
    
     void start(long baud);
     uint16_t readSerial();
-    // ret of -1 means not found
-    int valueForKey(String key);
+    // ret of kCommandTerminalNotFound means arg not found
+    int valueForArg(String arg);
 private:
 
     void parseParams();
@@ -32,7 +35,9 @@ private:
     void appendParam(String command, int index);
     void printParams();
     String g_serialString;
-    
+
+    char paramDelim;
+    char setDelim;
     CommandTerminalParam params[16];
     uint16_t numParams;
 };

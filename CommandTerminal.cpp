@@ -8,8 +8,17 @@
 
 #include "CommandTerminal.h"
 
-CommandTerminal::CommandTerminal() {
+CommandTerminal::CommandTerminal() 
+  : g_serialString(""),
+  paramDelim('|'),
+  setDelim(':') {   
     
+}
+
+CommandTerminal::CommandTerminal(char paramDelim, char setDelim)
+ : g_serialString("") {
+  this->paramDelim = paramDelim;
+  this->setDelim = setDelim;
 }
 
 CommandTerminal::~CommandTerminal() {
@@ -34,10 +43,10 @@ uint16_t CommandTerminal::readSerial() {
     }
 }
 
-int CommandTerminal::valueForKey(String key) {
+int CommandTerminal::valueForArg(String arg) {
   for(int i = 0; i < 16; i++) {
     CommandTerminalParam param = params[i];
-    if(param.key.equals(key)) {
+    if(param.arg.equals(arg)) {
       return param.value;
     }
   }
@@ -45,14 +54,13 @@ int CommandTerminal::valueForKey(String key) {
 }
 
 void CommandTerminal::appendParam(String cmdSet, int index) {
- 
-  int colonIndex = cmdSet.indexOf(':');
-  String key = cmdSet.substring(0, colonIndex);
+  int colonIndex = cmdSet.indexOf(setDelim);
+  String arg = cmdSet.substring(0, colonIndex);
   String valueString = cmdSet.substring(colonIndex+1, cmdSet.length());
   int value = valueString.toInt();
 
   CommandTerminalParam param = CommandTerminalParam();
-  param.key = key;
+  param.arg = arg;
   param.value = value;
  
   params[index] = param;
@@ -64,7 +72,7 @@ void CommandTerminal::printParams() {
   for(int i = 0; i < numParams; i++) {
     CommandTerminalParam param = params[i];
     Serial.print("i: "); Serial.println(i);
-    Serial.print("param.key: "); Serial.println(param.key);
+    Serial.print("param.arg: "); Serial.println(param.arg);
     Serial.print("param.value: "); Serial.println(param.value);
   }
 }
@@ -73,7 +81,7 @@ void CommandTerminal::printParams() {
 void CommandTerminal::clearParams() {
   for(int i = 0; i < 16; i++) {
     CommandTerminalParam param = CommandTerminalParam();
-    param.key = "";
+    param.arg = "";
     param.value = -1;
     params[i] = param;
   }
@@ -90,13 +98,13 @@ void CommandTerminal::parseParams() {
         //    x:5|y:0|r:234|g:188|b:164
         //    x:6|y:0|r:234|g:188|b:164
               
-        // First split by '|'
+        // First split by paramDelim
         const int kMaxCommands = 16;
         int pipeIndexex[kMaxCommands] = {};
 
         int pipeIndex = -1;
         for(int x = 0; x < 16; x++) {
-          pipeIndex = g_serialString.indexOf('|');
+          pipeIndex = g_serialString.indexOf(paramDelim);
           if (pipeIndex > -1) {
             // get text left of index
             String cmdSet = g_serialString.substring(0, pipeIndex);

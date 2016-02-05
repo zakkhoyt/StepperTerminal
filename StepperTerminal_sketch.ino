@@ -13,14 +13,17 @@ void setup()
 }
 void loop()
 {
+  // ***** Send commands in this format:
+  // s:1000|dir:1|del:1000
+  // s:5000|dir:1|del:75
+  // s:5000|dir:0|del:75
+
+  // This means that something was sent followed by a '\n'
   if(term.readSerial() > 0) {
  
-    // s:1000|dir:1|del:1000
-    // s:5000|dir:1|del:75
-    // s:5000|dir:0|del:75
-    uint16_t steps = term.valueForKey("s");
-    uint16_t dir = term.valueForKey("dir");
-    uint16_t del = term.valueForKey("del");
+    uint16_t steps = term.valueForArg("s");
+    uint16_t dir = term.valueForArg("dir");
+    uint16_t del = term.valueForArg("del");
     
     if(steps == -1 || dir == -1 || del == -1) {
       Serial.println("missing commands");    
