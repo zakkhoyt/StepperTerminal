@@ -25,7 +25,7 @@ void loop()
     uint16_t dir = term.valueForArg("dir");
     uint16_t del = term.valueForArg("del");
     
-    if(steps == -1 || dir == -1 || del == -1) {
+    if(steps == kCommandTerminalNotFound || dir == -1 || del == -1) {
       Serial.println("missing commands");    
     } else {
       digitalWrite(dirpin, dir);     
