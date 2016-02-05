@@ -21,8 +21,7 @@ class Terminal {
 public:
     Terminal();
     virtual ~Terminal();
-    
-    
+   
     void start(long baud);
     uint16_t readSerial();
     // ret of -1 means not found
